@@ -1,0 +1,13 @@
+<!-- Place this inside your android/app/src/main/AndroidManifest.xml -->
+<!-- Add these lines inside <manifest> but outside <application> -->
+
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-feature android:name="android.hardware.location.gps" android:required="false" />
+<uses-feature android:name="android.hardware.location.network" android:required="false" />
+
+<!-- Also add this inside <application> tag for image_picker on Android 13+ -->
+<!-- <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/> -->

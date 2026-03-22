@@ -200,6 +200,16 @@ class ApiService {
     }
   }
 
+  static Future<Set<int>> getCaughtMonsterIds() async {
+    try {
+      final response = await _db.from('monster_catchestbl').select('monster_id');
+      return (response as List).map((e) => (e['monster_id'] as num).toInt()).toSet();
+    } catch (e) {
+      debugPrint('getCaughtMonsterIds error: $e');
+      return {};
+    }
+  }
+
   // ─── TOP HUNTERS (LEADERBOARD) ────────────────────────────────────────────
 
   static Future<List<PlayerRanking>> getTopHunters() async {

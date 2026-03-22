@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/monster_model.dart';
-import '../services/api_service.dart';
+import '../api_service.dart';
 
 class DeleteMonsterPage extends StatefulWidget {
   const DeleteMonsterPage({super.key});
@@ -11,6 +11,7 @@ class DeleteMonsterPage extends StatefulWidget {
 
 class _DeleteMonsterPageState extends State<DeleteMonsterPage> {
   late Future<List<Monster>> _monstersFuture;
+  late Future<Set<int>> _caughtIdsFuture;
 
   @override
   void initState() {
@@ -20,6 +21,7 @@ class _DeleteMonsterPageState extends State<DeleteMonsterPage> {
 
   void _loadMonsters() {
     _monstersFuture = ApiService.getMonsters();
+    _caughtIdsFuture = ApiService.getCaughtMonsterIds();
   }
 
   Future<void> _refresh() async {
@@ -31,7 +33,17 @@ class _DeleteMonsterPageState extends State<DeleteMonsterPage> {
   // ════════════════════════════════════════════════════════════════════════════
   // MISSING CODE: Show confirmation dialog then call ApiService.deleteMonster
   // ════════════════════════════════════════════════════════════════════════════
-  Future<void> _deleteMonster(Monster monster) async {
+  Future<void> _deleteMonster(Monster monster, Set<int> caughtIds) async {
+    if (caughtIds.contains(monster.monsterId)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Monster already caught by a player. Can't be deleted."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -61,15 +73,13 @@ class _DeleteMonsterPageState extends State<DeleteMonsterPage> {
     if (confirmed != true) return;
 
     try {
-      final result = await ApiService.deleteMonster(
-        monsterId: monster.monsterId,
-      );
+      final result = await ApiService.deleteMonster(monster.monsterId);
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result["message"]?.toString() ?? "Done"),
+          content: Text(result ? 'Monster deleted successfully' : 'Failed to delete monster'),
         ),
       );
       _refresh();
@@ -87,9 +97,12 @@ class _DeleteMonsterPageState extends State<DeleteMonsterPage> {
       appBar: AppBar(
         title: const Text("Delete Monsters"),
       ),
-      body: FutureBuilder<List<Monster>>(
-        future: _monstersFuture,
-        builder: (context, snapshot) {
+      body: FutureBuilder(
+        future: Future.wait([
+          _monstersFuture,
+          _caughtIdsFuture,
+        ]),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -97,7 +110,8 @@ class _DeleteMonsterPageState extends State<DeleteMonsterPage> {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
 
-          final monsters = snapshot.data ?? [];
+          final monsters = (snapshot.data?[0] as List<Monster>?) ?? [];
+          final caughtIds = (snapshot.data?[1] as Set<int>?) ?? {};
 
           if (monsters.isEmpty) {
             return const Center(child: Text("No monsters found"));
@@ -128,7 +142,7 @@ class _DeleteMonsterPageState extends State<DeleteMonsterPage> {
                     subtitle: Text(monster.monsterType),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteMonster(monster),
+                      onPressed: () => _deleteMonster(monster, caughtIds),
                     ),
                   ),
                 );

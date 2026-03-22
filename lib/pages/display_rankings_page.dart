@@ -1,5 +1,6 @@
 // display_rankings_page.dart
 import 'package:flutter/material.dart';
+import '../app_text_styles.dart';
 import '../models/player_ranking_model.dart';
 import '../api_service.dart';
 
@@ -54,7 +55,7 @@ class _MonsterListPageState extends State<MonsterListPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline, size: 60, color: Colors.red),
+                  Icon(Icons.error_outline, size: AppTextStyles.scale(context, 60), color: Colors.red),
                   const SizedBox(height: 12),
                   Text('Error: ${snapshot.error}',
                       textAlign: TextAlign.center),
@@ -72,16 +73,16 @@ class _MonsterListPageState extends State<MonsterListPage> {
           final rankings = (snapshot.data ?? []).take(10).toList();
 
           if (rankings.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.emoji_events_outlined,
-                      size: 72, color: Colors.grey),
-                  SizedBox(height: 16),
+                      size: AppTextStyles.scale(context, 72), color: Colors.grey),
+                  const SizedBox(height: 16),
                   Text('No rankings yet.\nBe the first to catch a monster!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      style: TextStyle(fontSize: AppTextStyles.scale(context, 16), color: Colors.grey)),
                 ],
               ),
             );
@@ -103,18 +104,18 @@ class _MonsterListPageState extends State<MonsterListPage> {
                     ],
                   ),
                 ),
-                child: const Column(
+                child: Column(
                   children: [
-                    Icon(Icons.emoji_events, size: 50, color: Colors.amber),
-                    SizedBox(height: 8),
+                    Icon(Icons.emoji_events, size: AppTextStyles.scale(context, 50), color: Colors.amber),
+                    const SizedBox(height: 8),
                     Text(
                       'Top Monster Hunters',
                       style: TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.bold),
+                          fontSize: AppTextStyles.scale(context, 22), fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text('Top 10 players with the most captures',
-                        style: TextStyle(fontSize: 13)),
+                        style: TextStyle(fontSize: AppTextStyles.scale(context, 13))),
                   ],
                 ),
               ),
@@ -236,11 +237,11 @@ class _RankingCard extends StatelessWidget {
           style: TextStyle(
             fontWeight:
                 isTopThree ? FontWeight.bold : FontWeight.w500,
-            fontSize: isTopThree ? 16 : 15,
+            fontSize: AppTextStyles.scale(context, isTopThree ? 16 : 15),
           ),
         ),
         subtitle: Text('Player ID: ${rank.playerId}',
-            style: const TextStyle(fontSize: 12)),
+            style: TextStyle(fontSize: AppTextStyles.scale(context, 12))),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -248,13 +249,13 @@ class _RankingCard extends StatelessWidget {
             Text(
               '${rank.catchCount}',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: AppTextStyles.scale(context, 22),
                 fontWeight: FontWeight.bold,
                 color: isTopThree ? _medalColor : colorScheme.primary,
               ),
             ),
-            const Text('catches',
-                style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text('catches',
+                style: TextStyle(fontSize: AppTextStyles.scale(context, 11), color: Colors.grey)),
           ],
         ),
       ),

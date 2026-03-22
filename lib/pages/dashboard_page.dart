@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_text_styles.dart';
 import 'add_monster_page.dart';
 import 'display_rankings_page.dart';
 import 'map_page.dart';
@@ -111,7 +112,7 @@ class DashboardPage extends StatelessWidget {
           ],
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -128,18 +129,18 @@ class DashboardPage extends StatelessWidget {
                   ],
                 ),
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Monster Control Center",
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: AppTextStyles.scale(context, 22),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),
+                  const Text(
                     "Manage monster records, catch monsters, and view monster areas.",
                   ),
                 ],
@@ -148,44 +149,44 @@ class DashboardPage extends StatelessWidget {
             const SizedBox(height: 20),
 
             // ── Dashboard grid ────────────────────────────────────────────
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-                children: [
-                  _DashboardCard(
-                    icon: Icons.add_circle,
-                    label: "Add Monsters",
-                    onTap: () => _open(context, const AddMonsterPage()),
-                  ),
-                  _DashboardCard(
-                    icon: Icons.catching_pokemon,
-                    label: "Catch Monsters",
-                    onTap: () => _open(context, CatchMonsterPage(playerId: (playerData?['userid'] as int?) ?? (playerData?['player_id'] as int?) ?? 1)),
-                  ),
-                  _DashboardCard(
-                    icon: Icons.edit,
-                    label: "Edit Monsters",
-                    onTap: () => _open(context, const EditMonstersPage()),
-                  ),
-                  _DashboardCard(
-                    icon: Icons.delete_forever,
-                    label: "Delete Monsters",
-                    onTap: () => _open(context, const DeleteMonsterPage()),
-                  ),
-                  _DashboardCard(
-                    icon: Icons.list_alt,
-                    label: "View Top Monster Hunters",
-                    onTap: () => _open(context, const MonsterListPage()),
-                  ),
-                  _DashboardCard(
-                    icon: Icons.map,
-                    label: "Show Monster Map",
-                    onTap: () => _open(context, const MapPage()),
-                  ),
-                ],
-              ),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 14,
+              children: [
+                _DashboardCard(
+                  icon: Icons.add_circle,
+                  label: "Add Monsters",
+                  onTap: () => _open(context, const AddMonsterPage()),
+                ),
+                _DashboardCard(
+                  icon: Icons.catching_pokemon,
+                  label: "Catch Monsters",
+                  onTap: () => _open(context, CatchMonsterPage(playerId: (playerData?['userid'] as int?) ?? (playerData?['player_id'] as int?) ?? 1)),
+                ),
+                _DashboardCard(
+                  icon: Icons.edit,
+                  label: "Edit Monsters",
+                  onTap: () => _open(context, const EditMonstersPage()),
+                ),
+                _DashboardCard(
+                  icon: Icons.delete_forever,
+                  label: "Delete Monsters",
+                  onTap: () => _open(context, const DeleteMonsterPage()),
+                ),
+                _DashboardCard(
+                  icon: Icons.list_alt,
+                  label: "View Top Monster Hunters",
+                  onTap: () => _open(context, const MonsterListPage()),
+                ),
+                _DashboardCard(
+                  icon: Icons.map,
+                  label: "Show Monster Map",
+                  onTap: () => _open(context, const MapPage()),
+                ),
+              ],
             ),
           ],
         ),
@@ -223,15 +224,15 @@ class _DashboardCard extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 42,
+                size: AppTextStyles.scale(context, 42),
                 color: colorScheme.primary,
               ),
               const SizedBox(height: 12),
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 15,
+                style: TextStyle(
+                  fontSize: AppTextStyles.scale(context, 15),
                   fontWeight: FontWeight.w600,
                 ),
               ),

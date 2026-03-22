@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
+import 'app_text_styles.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/register_page.dart';
 
@@ -63,16 +64,16 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.catching_pokemon,
-                      size: 90, color: Colors.white),
+                  Icon(Icons.catching_pokemon,
+                      size: AppTextStyles.scale(context, 90), color: Colors.white),
                   const SizedBox(height: 12),
-                  const Text('HAUPokemon',
+                  Text('HAUPokemon',
                       style: TextStyle(
-                          fontSize: 32,
+                          fontSize: AppTextStyles.scale(context, 32),
                           fontWeight: FontWeight.bold,
                           color: Colors.white)),
-                  const Text("Monster's App",
-                      style: TextStyle(fontSize: 16, color: Colors.white70)),
+                  Text("Monster's App",
+                      style: TextStyle(fontSize: AppTextStyles.scale(context, 16), color: Colors.white70)),
                   const SizedBox(height: 40),
                   Card(
                     shape: RoundedRectangleBorder(
@@ -119,8 +120,8 @@ class _LoginPageState extends State<LoginPage> {
                                       width: 20,
                                       child: CircularProgressIndicator(
                                           color: Colors.white, strokeWidth: 2))
-                                  : const Text('Login',
-                                      style: TextStyle(fontSize: 16)),
+                                  : Text('Login',
+                                      style: TextStyle(fontSize: AppTextStyles.scale(context, 16))),
                             ),
                           ),
                           const SizedBox(height: 16),

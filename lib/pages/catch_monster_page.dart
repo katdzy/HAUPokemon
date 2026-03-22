@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:torch_light/torch_light.dart';
 import '../api_service.dart';
+import '../app_text_styles.dart';
 import '../models/monster_model.dart';
 
 class CatchMonsterPage extends StatefulWidget {
@@ -259,8 +260,8 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
             const SizedBox(height: 12),
             Text(
               monster.monsterName,
-              style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: AppTextStyles.scale(context, 20), fontWeight: FontWeight.bold),
             ),
             Text(
               monster.monsterType,
@@ -366,7 +367,7 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
                     monsterFound
                         ? Icons.catching_pokemon
                         : Icons.radar,
-                    size: 80,
+                    size: AppTextStyles.scale(context, 80),
                     color: monsterFound
                         ? Colors.red
                         : colorScheme.primary,
@@ -390,8 +391,8 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
                     : const Icon(Icons.catching_pokemon, size: 28),
                 label: Text(
                   _isDetecting ? 'Scanning...' : 'Catch Monsters',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: AppTextStyles.scale(context, 18), fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
@@ -421,7 +422,7 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
                 _statusMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: AppTextStyles.scale(context, 16),
                   fontWeight: FontWeight.w500,
                   color: monsterFound ? Colors.red[800] : null,
                   height: 1.5,

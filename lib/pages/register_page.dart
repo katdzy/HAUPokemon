@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api_service.dart';
+import '../app_text_styles.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -66,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF1A237E), Color(0xFF283593), Color(0xFF3949AB)],
+            colors: [Color(0xFF6B2E25), Color(0xFF904B40), Color(0xFFA85C50)],
           ),
         ),
         child: SafeArea(
@@ -76,19 +77,19 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.catching_pokemon,
-                      size: 80, color: Colors.white),
+                  Icon(Icons.catching_pokemon,
+                      size: AppTextStyles.scale(context, 80), color: Colors.white),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'HAUPokemon',
                     style: TextStyle(
-                        fontSize: 28,
+                        fontSize: AppTextStyles.scale(context, 28),
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),
-                  const Text(
+                  Text(
                     "Create your account",
-                    style: TextStyle(fontSize: 15, color: Colors.white70),
+                    style: TextStyle(fontSize: AppTextStyles.scale(context, 15), color: Colors.white70),
                   ),
                   const SizedBox(height: 32),
                   Card(
@@ -102,10 +103,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const Text(
+                            Text(
                               'Player Registration',
                               style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                                  fontSize: AppTextStyles.scale(context, 20), fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 24),
@@ -200,8 +201,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                         child: CircularProgressIndicator(
                                             color: Colors.white, strokeWidth: 2))
                                     : const Icon(Icons.person_add),
-                                label: const Text('Register',
-                                    style: TextStyle(fontSize: 16)),
+                                label: Text('Register',
+                                    style: TextStyle(fontSize: AppTextStyles.scale(context, 16))),
                               ),
                             ),
                             const SizedBox(height: 16),

@@ -16,8 +16,8 @@ class CatchMonsterPage extends StatefulWidget {
 
 class _CatchMonsterPageState extends State<CatchMonsterPage>
     with TickerProviderStateMixin {
-  double? _latitude;
-  double? _longitude;
+  final TextEditingController _latController = TextEditingController();
+  final TextEditingController _lngController = TextEditingController();
   bool _isDetecting = false;
   String _statusMessage = 'Tap "Catch Monsters" to scan for nearby monsters.';
   Monster? _detectedMonster;
@@ -42,6 +42,8 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
 
   @override
   void dispose() {
+    _latController.dispose();
+    _lngController.dispose();
     _pulseController.dispose();
     _audioPlayer.dispose();
     super.dispose();
@@ -84,39 +86,68 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
 
   // ── Main detect + catch flow ───────────────────────────────────────────────
   Future<void> _catchMonsters() async {
-    final hasPermission = await _handleLocationPermission();
-    if (!hasPermission) return;
+    double? inputLat = double.tryParse(_latController.text);
+    double? inputLng = double.tryParse(_lngController.text);
 
-    setState(() {
-      _isDetecting = true;
-      _detectedMonster = null;
-      _statusMessage = 'Scanning your surroundings...';
-    });
-    _pulseController.repeat(reverse: true);
+    if (inputLat == null || inputLng == null) {
+      final hasPermission = await _handleLocationPermission();
+      if (!hasPermission) return;
+
+      setState(() {
+        _isDetecting = true;
+        _detectedMonster = null;
+        _statusMessage = 'Fetching your current location...';
+      });
+      _pulseController.repeat(reverse: true);
+
+      try {
+        final position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        inputLat = position.latitude;
+        inputLng = position.longitude;
+        
+        setState(() {
+          _latController.text = inputLat!.toString();
+          _lngController.text = inputLng!.toString();
+        });
+      } catch (e) {
+        setState(() {
+          _statusMessage = 'Error getting location: $e';
+          _isDetecting = false;
+        });
+        _pulseController.stop();
+        _pulseController.reset();
+        return;
+      }
+    } else {
+      setState(() {
+        _isDetecting = true;
+        _detectedMonster = null;
+        _statusMessage = 'Scanning at entered coordinates...';
+      });
+      _pulseController.repeat(reverse: true);
+    }
 
     try {
-      final position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      setState(() {
-        _latitude = position.latitude;
-        _longitude = position.longitude;
-      });
-
       final monsters = await ApiService.getMonsters();
       Monster? nearbyMonster;
       double closestDistance = double.infinity;
 
       for (var monster in monsters) {
         double distance = Geolocator.distanceBetween(
-          position.latitude,
-          position.longitude,
+          inputLat!,
+          inputLng!,
           monster.spawnLatitude,
           monster.spawnLongitude,
         );
-        if (distance <= monster.spawnRadiusMeters &&
-            distance < closestDistance) {
-          closestDistance = distance;
-          nearbyMonster = monster;
+        
+        bool isExactMatch = (inputLat == monster.spawnLatitude && inputLng == monster.spawnLongitude);
+        
+        if (isExactMatch || distance <= monster.spawnRadiusMeters) {
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            nearbyMonster = monster;
+          }
         }
       }
 
@@ -126,7 +157,7 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
           _statusMessage =
               '⚠️ Monster detected!\n${nearbyMonster!.monsterName} (${nearbyMonster.monsterType})\n${closestDistance.toStringAsFixed(1)} m away';
         });
-        await _catchSequence(nearbyMonster, position);
+        await _catchSequence(nearbyMonster, inputLat!, inputLng!);
       } else {
         setState(() {
           _statusMessage = 'No monsters nearby.\nKeep exploring!';
@@ -144,7 +175,7 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
   }
 
   // ── Catch sequence: alarm + torch + API log ────────────────────────────────
-  Future<void> _catchSequence(Monster monster, Position position) async {
+  Future<void> _catchSequence(Monster monster, double lat, double lng) async {
     // Sound alarm
     try {
       await _audioPlayer.play(AssetSource('sounds/monster_alarm.wav'));
@@ -173,8 +204,8 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
         playerId: widget.playerId,
         monsterId: monster.monsterId,
         locationId: 1,
-        latitude: position.latitude,
-        longitude: position.longitude,
+        latitude: lat,
+        longitude: lng,
       );
 
       if (!mounted) return;
@@ -274,18 +305,32 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
             Row(
               children: [
                 Expanded(
-                  child: _CoordCard(
-                    label: 'Latitude',
-                    value: _latitude?.toStringAsFixed(6) ?? '--',
-                    icon: Icons.gps_fixed,
+                  child: TextField(
+                    controller: _latController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    decoration: InputDecoration(
+                      labelText: 'Latitude',
+                      hintText: 'e.g. 37.77',
+                      prefixIcon: const Icon(Icons.gps_fixed),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _CoordCard(
-                    label: 'Longitude',
-                    value: _longitude?.toStringAsFixed(6) ?? '--',
-                    icon: Icons.gps_fixed,
+                  child: TextField(
+                    controller: _lngController,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    decoration: InputDecoration(
+                      labelText: 'Longitude',
+                      hintText: 'e.g. -122.41',
+                      prefixIcon: const Icon(Icons.gps_fixed),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -405,45 +450,3 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
   }
 }
 
-// ─── GPS Coordinate Card ──────────────────────────────────────────────────────
-class _CoordCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-
-  const _CoordCard(
-      {required this.label, required this.value, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 14, color: colorScheme.primary),
-              const SizedBox(width: 4),
-              Text(label,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-                fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-}

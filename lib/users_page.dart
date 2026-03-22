@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
+import 'app_text_styles.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -232,9 +233,9 @@ class _UsersPageState extends State<UsersPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : users.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text('No players found.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      style: TextStyle(fontSize: AppTextStyles.scale(context, 16), color: Colors.grey)),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),

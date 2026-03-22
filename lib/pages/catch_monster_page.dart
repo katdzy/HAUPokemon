@@ -432,14 +432,14 @@ class _CatchMonsterPageState extends State<CatchMonsterPage>
             const SizedBox(height: 16),
 
             // ── Info note ────────────────────────────────────────────────────
-            const Row(
+            Row(
               children: [
-                Icon(Icons.info_outline, size: 16, color: Colors.grey),
-                SizedBox(width: 6),
+                const Icon(Icons.info_outline, size: 16, color: Colors.grey),
+                const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     'When a monster is detected, your phone will sound an alarm and flash the torch for 5 seconds.',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: AppTextStyles.scale(context, 12), color: Colors.grey),
                   ),
                 ),
               ],

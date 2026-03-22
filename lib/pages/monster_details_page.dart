@@ -1,6 +1,7 @@
 // monster_details_page.dart – stub for future use
 import 'package:flutter/material.dart';
 import '../models/monster_model.dart';
+import '../app_text_styles.dart';
 
 class MonsterDetailsPage extends StatelessWidget {
   final Monster monster;
@@ -28,7 +29,7 @@ class MonsterDetailsPage extends StatelessWidget {
               ),
             const SizedBox(height: 16),
             Text("Name: ${monster.monsterName}",
-                style: const TextStyle(fontSize: 18)),
+                style: TextStyle(fontSize: AppTextStyles.scale(context, 18))),
             Text("Type: ${monster.monsterType}"),
             Text(
                 "Latitude: ${monster.spawnLatitude.toStringAsFixed(7)}"),

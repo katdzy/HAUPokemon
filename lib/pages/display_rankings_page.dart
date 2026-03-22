@@ -190,8 +190,9 @@ class _RankingCard extends StatelessWidget {
         boxShadow: isTopThree
             ? [
                 BoxShadow(
-                    color: _medalColor.withAlpha(60),
-                    blurRadius: 8,
+                    color: _medalColor.withAlpha(120),
+                    blurRadius: 15,
+                    spreadRadius: 2,
                     offset: const Offset(0, 2))
               ]
             : null,
@@ -222,8 +223,8 @@ class _RankingCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '$rankNum',
-                    style: const TextStyle(
-                        fontSize: 9,
+                    style: TextStyle(
+                        fontSize: AppTextStyles.scale(context, 9),
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   ),

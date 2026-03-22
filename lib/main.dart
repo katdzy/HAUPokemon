@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'login_page.dart';
 
@@ -26,6 +27,7 @@ class HauMonstersApp extends StatelessWidget {
           seedColor: const Color(0xFF8B0000), // dark red, HAU color
           brightness: Brightness.light,
         ),
+        textTheme: GoogleFonts.dmSansTextTheme(),
         useMaterial3: true,
       ),
       home: const LoginPage(),
